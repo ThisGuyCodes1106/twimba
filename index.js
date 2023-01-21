@@ -73,9 +73,32 @@ function handleRetweetClick(tweetId) {
 }
 
 function handleReplyClick(tweetId) {
-    document.getElementById(`replies-${tweetId}`).classList.toggle('hidden')
-}
+    const tweetReplies = document.getElementById(`replies-${tweetId}`)
+    tweetReplies.classList.toggle('hidden')
 
+    const replyInput = document.getElementById(`reply-input-${tweetId}`)
+    const replySubmit = document.getElementById(`reply-btn-${tweetId}`)
+    
+
+    replySubmit.addEventListener("click", function() {
+        const newReply = {
+            handle: '@Scrimba',
+            profilePic: 'images/scrimbalogo.png',
+            tweetText: replyInput.value,
+        }
+
+        tweetsData.forEach(tweet => {
+            if (tweet.uuid === tweetId) {
+                const targetTweetObj = tweet
+                targetTweetObj.replies.unshift(newReply)
+            }
+        })
+        
+        replyInput.value = null
+        renderFeed()
+        handleReplyClick(tweetId)
+    })
+}
 
 function getFeedHtml() {
     let feedHtml = ""
@@ -100,7 +123,21 @@ function getFeedHtml() {
                     </div>
                 </div>`
             })
+            repliesHtml += `
+            <div class="tweet-reply" id="reply-form">
+                <textarea class="tweet-reply-area" id="reply-input-${tweet.uuid}" placeholder="Reply to tweet"></textarea>
+                <button class="reply-btn" id="reply-btn-${tweet.uuid}">Reply</button>
+            </div>`
+        } else {
+            repliesHtml = `
+            <div class="tweet-reply" id="reply-form">
+                <textarea class="tweet-reply-area" id="reply-input-${tweet.uuid}" placeholder="Reply to tweet"></textarea>
+                <button class="reply-btn" id="reply-btn-${tweet.uuid}">Reply</button>
+            </div>`
         }
+
+
+
 
         feedHtml += `
         <div class="tweet">

@@ -44,7 +44,7 @@ header{
 
 /* textareas + btn */
 
-textarea{
+.new-tweet-input {
     border: none;
     padding: 10px;
     margin: 0 0 20px 0;
@@ -55,7 +55,7 @@ textarea{
     resize: none;
 }
 
-button{
+#tweet-btn{
     background-color: #1DA1F2;
     border: none;
     color: white;
@@ -99,6 +99,29 @@ button{
     padding: 20px 0 0 0px;
     margin: 10px 0 10px 40px;
     width: 80%;
+}
+
+.tweet-reply-area {
+    border: none;
+    padding: 10px;
+    height: 60px;
+    width: 100%;
+    font-size: 14px;
+    line-height: 20px;
+    resize: none;
+}
+
+.reply-btn {
+    background-color: #1DA1F2;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 5px;
+    margin-left: auto;
 }
 
 .handle{
