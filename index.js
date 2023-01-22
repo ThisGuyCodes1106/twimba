@@ -1,15 +1,24 @@
 import { tweetsData } from "./data.js"
-import { v4 as uuidv4 } from 'https://jspm.dev/uuid';
+import { v4 as uuidv4 } from 'https://jspm.dev/uuid'
 
 const tweetBtn = document.getElementById("tweet-btn")
 const tweetFeed = document.getElementById("feed")
 
+let storedData = []
+
+if (localStorage.getItem('tweetsLocalData')) {
+    storedData = JSON.parse(localStorage.getItem("tweetsLocalData"))
+} else {
+    storedData = tweetsData
+}
+
+function saveToLocalStore() {
+    localStorage.setItem('tweetsLocalData', JSON.stringify(storedData))
+}
+
 tweetBtn.addEventListener('click', function() {
-
     const tweetInput = document.getElementById('tweet-input')
-    
     if (tweetInput.value) {
-
         const newTweet = {
             handle: '@Scrimba',
             profilePic: 'images/scrimbalogo.png',
@@ -22,12 +31,11 @@ tweetBtn.addEventListener('click', function() {
             uuid: uuidv4(),
         }
 
-        tweetsData.unshift(newTweet)
+        storedData.unshift(newTweet)
         tweetInput.value = null
     }
-
     renderFeed()
-
+    saveToLocalStore()
 })
 
 document.addEventListener('click', function(event) {
@@ -43,7 +51,7 @@ document.addEventListener('click', function(event) {
 })
 
 function handleLikeClick(tweetId) {
-    tweetsData.forEach(tweet => {
+    storedData.forEach(tweet => {
         if (tweet.uuid === tweetId) {
             const targetTweetObj = tweet
             if(tweet.isLiked) {
@@ -53,12 +61,13 @@ function handleLikeClick(tweetId) {
             }
             targetTweetObj.isLiked = !targetTweetObj.isLiked
             renderFeed()
+            saveToLocalStore()
         }
     })
 }
 
 function handleRetweetClick(tweetId) {
-    tweetsData.forEach(tweet => {
+    storedData.forEach(tweet => {
         if (tweet.uuid === tweetId) {
             const targetTweetObj = tweet
             if (tweet.isRetweeted) {
@@ -68,6 +77,7 @@ function handleRetweetClick(tweetId) {
             }
             targetTweetObj.isRetweeted = !targetTweetObj.isRetweeted
             renderFeed()
+            saveToLocalStore()
         }
     })
 }
@@ -87,23 +97,27 @@ function handleReplyClick(tweetId) {
             tweetText: replyInput.value,
         }
 
-        tweetsData.forEach(tweet => {
-            if (tweet.uuid === tweetId) {
-                const targetTweetObj = tweet
-                targetTweetObj.replies.unshift(newReply)
-            }
-        })
-        
-        replyInput.value = null
+        if (replyInput.value) {
+
+            storedData.forEach(tweet => {
+                if (tweet.uuid === tweetId) {
+                    const targetTweetObj = tweet
+                    targetTweetObj.replies.unshift(newReply)
+                }
+            })
+            
+            replyInput.value = null
+        }
         renderFeed()
         handleReplyClick(tweetId)
+        saveToLocalStore()
     })
 }
 
 function getFeedHtml() {
     let feedHtml = ""
 
-    tweetsData.forEach(tweet => {
+    storedData.forEach(tweet => {
 
         let likeIconCLass = tweet.isLiked ? "liked" : ""
         let retweetIconClass = tweet.isRetweeted ? "retweeted" : ""
@@ -172,6 +186,7 @@ function getFeedHtml() {
 }
 
 function renderFeed() {
+
     tweetFeed.innerHTML = getFeedHtml()
 }
 
